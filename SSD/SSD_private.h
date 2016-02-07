@@ -21,8 +21,8 @@
 #define SSD_u8DISPSEGGColInMap	7
 #define SSD_u8DISPTYPEColInMap	8
 #define SSD_u8DISPINITColInMap	9
+#define SSD_u8DISPINITSTATEColInMap 10
 #define SSD_u8LastColInLockUpTable 9
-
 #define SSD_u8FirstPinCol 		7
 
 #define SSD_u8MaxNoDisplay  	9

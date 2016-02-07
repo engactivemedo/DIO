@@ -14,7 +14,7 @@
 /*Comments!:  PIN Initial Direction   */
 /*Range CommonCathode OR CommonAnode*/
 #define SSD_u8DISP1TYPE 	   SSD_u8COMMCATH
-#define SSD_u8DISP1INIT		   9
+#define SSD_u8DISP1INIT		   5
 #define SSD_u8DISP1INITSTATE   SSD_u8ONSTATE
 #define SSD_u8DISP1COM		   DIO_u8PIN0//WITH THE DESCREPTION OF THE dio DRIVER AND TO THE END OF THE CONFIG
 #define SSD_u8DISP1SEGA		   DIO_u8PIN1
@@ -27,7 +27,7 @@
 
 
 #define SSD_u8DISP2TYPE			SSD_u8COMMAND
-#define SSD_u8DISP2INIT         5
+#define SSD_u8DISP2INIT         7
 #define SSD_u8DISP2INITSTATE	SSD_u8ONSTATE
 #define SSD_u8DISP2COM 			DIO_u8PIN8
 #define SSD_u8DISP2SEGA			DIO_u8PIN9

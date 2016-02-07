@@ -12,12 +12,13 @@
 #include "SSD_interface.h"
 #include "util.h"
 //it alook up table to determine the Pin configuration to each SS
-static volatile u8 Global_u8LookUpTableOfTheConfigPins[6][10]={{SSD_u8DISP1COM,SSD_u8DISP1SEGA,SSD_u8DISP1SEGB,SSD_u8DISP1SEGC,SSD_u8DISP1SEGD,SSD_u8DISP1SEGE,SSD_u8DISP1SEGF,SSD_u8DISP1SEGG,SSD_u8DISP1TYPE,SSD_u8DISP1INIT},
-		 	 	 	 	 	 	 	 	 	 	               {SSD_u8DISP2COM,SSD_u8DISP2SEGA,SSD_u8DISP2SEGB,SSD_u8DISP2SEGC,SSD_u8DISP2SEGD,SSD_u8DISP2SEGE,SSD_u8DISP2SEGF,SSD_u8DISP2SEGG,SSD_u8DISP2TYPE,SSD_u8DISP2INIT},
-												               {SSD_u8DISP3COM,SSD_u8DISP3SEGA,SSD_u8DISP3SEGB,SSD_u8DISP3SEGC,SSD_u8DISP3SEGD,SSD_u8DISP3SEGE,SSD_u8DISP3SEGF,SSD_u8DISP3SEGG,SSD_u8DISP3TYPE,SSD_u8DISP3INIT},
-													           {SSD_u8DISP4COM,SSD_u8DISP4SEGA,SSD_u8DISP4SEGB,SSD_u8DISP4SEGC,SSD_u8DISP4SEGD,SSD_u8DISP4SEGE,SSD_u8DISP4SEGF,SSD_u8DISP4SEGG,SSD_u8DISP4TYPE,SSD_u8DISP4INIT},
-													           {SSD_u8DISP5COM,SSD_u8DISP5SEGA,SSD_u8DISP5SEGB,SSD_u8DISP5SEGC,SSD_u8DISP5SEGD,SSD_u8DISP5SEGE,SSD_u8DISP5SEGF,SSD_u8DISP5SEGG,SSD_u8DISP5TYPE,SSD_u8DISP5INIT},
-													           {SSD_u8DISP6COM,SSD_u8DISP6SEGA,SSD_u8DISP6SEGB,SSD_u8DISP6SEGC,SSD_u8DISP6SEGD,SSD_u8DISP6SEGE,SSD_u8DISP6SEGF,SSD_u8DISP6SEGG,SSD_u8DISP6TYPE,SSD_u8DISP6INIT}};
+;
+static volatile u8 Global_u8LookUpTableOfTheConfigPins[6][11]={{SSD_u8DISP1COM,SSD_u8DISP1SEGA,SSD_u8DISP1SEGB,SSD_u8DISP1SEGC,SSD_u8DISP1SEGD,SSD_u8DISP1SEGE,SSD_u8DISP1SEGF,SSD_u8DISP1SEGG,SSD_u8DISP1TYPE,SSD_u8DISP1INIT,SSD_u8DISP1INITSTATE},
+		 	 	 	 	 	 	 	 	 	 	               {SSD_u8DISP2COM,SSD_u8DISP2SEGA,SSD_u8DISP2SEGB,SSD_u8DISP2SEGC,SSD_u8DISP2SEGD,SSD_u8DISP2SEGE,SSD_u8DISP2SEGF,SSD_u8DISP2SEGG,SSD_u8DISP2TYPE,SSD_u8DISP2INIT,SSD_u8DISP2INITSTATE},
+												               {SSD_u8DISP3COM,SSD_u8DISP3SEGA,SSD_u8DISP3SEGB,SSD_u8DISP3SEGC,SSD_u8DISP3SEGD,SSD_u8DISP3SEGE,SSD_u8DISP3SEGF,SSD_u8DISP3SEGG,SSD_u8DISP3TYPE,SSD_u8DISP3INIT,SSD_u8DISP3INITSTATE},
+													           {SSD_u8DISP4COM,SSD_u8DISP4SEGA,SSD_u8DISP4SEGB,SSD_u8DISP4SEGC,SSD_u8DISP4SEGD,SSD_u8DISP4SEGE,SSD_u8DISP4SEGF,SSD_u8DISP4SEGG,SSD_u8DISP4TYPE,SSD_u8DISP4INIT,SSD_u8DISP4INITSTATE},
+													           {SSD_u8DISP5COM,SSD_u8DISP5SEGA,SSD_u8DISP5SEGB,SSD_u8DISP5SEGC,SSD_u8DISP5SEGD,SSD_u8DISP5SEGE,SSD_u8DISP5SEGF,SSD_u8DISP5SEGG,SSD_u8DISP5TYPE,SSD_u8DISP5INIT,SSD_u8DISP5INITSTATE},
+													           {SSD_u8DISP6COM,SSD_u8DISP6SEGA,SSD_u8DISP6SEGB,SSD_u8DISP6SEGC,SSD_u8DISP6SEGD,SSD_u8DISP6SEGE,SSD_u8DISP6SEGF,SSD_u8DISP6SEGG,SSD_u8DISP6TYPE,SSD_u8DISP6INIT,SSD_u8DISP6INITSTATE}};
 
 // Look up table for the convertion of the no to the display bit
 static volatile u8 Global_u8LookUpTableOfTheNumbersToDisplay[10]={0b0000001,0b1001111,0b0010010,0b0000110,0b1001100,0b0100100,0b0100000,0b0001111,0b00000000,0b0000100};
@@ -29,23 +30,39 @@ u8 Global_u8CurrentValOfTheSS[6]={0};
 void SSD_voidInit(void) {
 	u8 local_u8Counter;
 	// TODO make the common
+	//to loop upon the SS in the lock up table according to the SSD_u8DISPLAYCOUNT
 	for (local_u8Counter = 0; local_u8Counter <SSD_u8DISPLAYCOUNT;local_u8Counter++) {
 		//initializ the ports as out put
+			//switch the kind of every SS if Common kathode OR Anode
 
-		switch (Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPTYPEColInMap]) {
+
+
+		DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^Togglebit(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPTYPEColInMap],0)));
+		SSD_u8Display(local_u8Counter+1,Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITColInMap]);
+
+/*		switch (Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPTYPEColInMap]) {
 		case SSD_u8COMMAND:
-			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],DIO_u8LOW);
+			//write the common according to that operation
+			//(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8HIGH)=
+			//write low if the enable is high
+			//write high if the enable is low
+
+			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8HIGH));
 			//TODO dont forget to uncomment what come next
 			SSD_u8Display(local_u8Counter+1,Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITColInMap]);
 			break;
 		case SSD_u8COMMCATH:
-			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],DIO_u8HIGH);
+			//write the common according to that operation
+						//(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8HIGH)=
+						//write low if the enable is high
+						//write high if the enable is low
+			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8LOW));
 			//TODO dont forget to uncomment what come next
 			SSD_u8Display(local_u8Counter+1,Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITColInMap]);
 			break;
 		default:
 			break;
-		}
+		}*/
 
 	}
 }
