@@ -4,8 +4,8 @@
  *  Created on: Jan 27, 2016
  *      Author: nada
  */
-#include "util.h"
-#include "types.h"
+#include "../util.h"
+#include "../types.h"
 #include "DIO_PRIVATE.H"
 #include "DIO_CONFIG.H"
 #include "DIO_iNTERFACE.H"

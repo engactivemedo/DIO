@@ -46,6 +46,9 @@
 /******************public functions*************************/
 /***********************************************************/
 
+/*comment!:to Display a number on multi screen */
+extern u8 SSD_u8DisplayMultiScreen(u8 copy_u8StartSS,u8 copy_u8EndSS,u8 copy_u8Delay,u16 copy_u8DispVal);
+
 /*comment!:to Display a number */
 extern u8 SSD_u8Display(u8 copy_u8DispIdx,u8 copy_u8DispVal);
 /*comment!:to GET the current value Displayed on the 7Segment*/

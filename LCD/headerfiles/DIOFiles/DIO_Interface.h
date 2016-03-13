@@ -67,10 +67,10 @@ comment!:PORT Index values
 
 #ifndef DIO_INTERFACE_H_
 #define DIO_INTERFACE_H_
-#include "types.h"
+#include "../types.h"
 
 /*******************************************************************/
-/****************Public Definitions********************************/
+/****************Public Definitions*********************************/
 /*******************************************************************/
 
 /* comment!:Pin Index Values */
@@ -151,8 +151,22 @@ extern u8 DIO_u8ReadPinDir(u8 Copy_u8PinIdx,u8* Copy_u8PtrToDir);
 /*comment!:Read Port Direction*/
 extern u8 DIO_u8ReadPortDir(u8 Copy_u8PortIdx,u8* Copy_u8PtrToDir);
 
+/*comment!:goto specific position on the screen*/
+extern u8 LCD_u8GotoXY(u8 Copy_u8XPosition, u8 Copy_u8YPosition);
+
+/*comment!:clr the screen */
+extern u8 lCD_u8CLRScreen(void);
 
 /*comment!:intialization function*/
 extern void DIO_voidInit(void);
+
+/*comment!:setting the mode to arabic mode*/
+void LCD_arabicmode();
+
+/*comment!:setting the mode to english mode*/
+void LCD_englishmode();
+
+void LCD_voidUploadCustomChar(u8 copy_u8location, u8 *copy_u8character);
+
 
 #endif /* DIO_INTERFACE_H_ */

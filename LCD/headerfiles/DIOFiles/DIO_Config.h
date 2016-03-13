@@ -28,7 +28,7 @@
 #define DIO_u8PIN13_INITDIR        DIO_u8OUTPUT
 #define DIO_u8PIN14_INITDIR        DIO_u8OUTPUT
 #define DIO_u8PIN15_INITDIR        DIO_u8OUTPUT
-#define DIO_u8PIN16_INITDIR        DIO_u8OUTPUT		 ///TODO make PIN16 it input
+#define DIO_u8PIN16_INITDIR        DIO_u8OUTPUT
 #define DIO_u8PIN17_INITDIR        DIO_u8OUTPUT
 #define DIO_u8PIN18_INITDIR        DIO_u8OUTPUT
 #define DIO_u8PIN19_INITDIR        DIO_u8OUTPUT
@@ -42,8 +42,8 @@
 #define DIO_u8PIN27_INITDIR        DIO_u8OUTPUT
 #define DIO_u8PIN28_INITDIR        DIO_u8OUTPUT
 #define DIO_u8PIN29_INITDIR        DIO_u8OUTPUT
-#define DIO_u8PIN30_INITDIR        DIO_u8INPUT
-#define DIO_u8PIN31_INITDIR        DIO_u8INPUT
+#define DIO_u8PIN30_INITDIR        DIO_u8OUTPUT
+#define DIO_u8PIN31_INITDIR        DIO_u8OUTPUT
 
 
 
@@ -53,9 +53,9 @@
 /*Comments!:  PIN Initial Value   */
 /*Range!   : DIO_u8HIGH ~ DIO_u8LOW   */
 
-#define DIO_u8PIN0_INITVAL         DIO_u8LOW
-#define DIO_u8PIN1_INITVAL         DIO_u8LOW
-#define DIO_u8PIN2_INITVAL         DIO_u8LOW
+#define DIO_u8PIN0_INITVAL         DIO_u8HIGH
+#define DIO_u8PIN1_INITVAL         DIO_u8HIGH
+#define DIO_u8PIN2_INITVAL         DIO_u8HIGH
 #define DIO_u8PIN3_INITVAL         DIO_u8HIGH
 #define DIO_u8PIN4_INITVAL         DIO_u8HIGH
 #define DIO_u8PIN5_INITVAL         DIO_u8HIGH
@@ -83,6 +83,6 @@
 #define DIO_u8PIN27_INITVAL        DIO_u8HIGH
 #define DIO_u8PIN28_INITVAL        DIO_u8HIGH
 #define DIO_u8PIN29_INITVAL        DIO_u8HIGH
-#define DIO_u8PIN30_INITVAL        DIO_u8HIGH
+#define DIO_u8PIN30_INITVAL        DIO_u8LOW
 #define DIO_u8PIN31_INITVAL        DIO_u8HIGH
 

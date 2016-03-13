@@ -11,6 +11,7 @@
 #include "SSD_private.h"
 #include "SSD_interface.h"
 #include "util.h"
+#include "Delay_prog.c"
 //it alook up table to determine the Pin configuration to each SS
 ;
 static volatile u8 Global_u8LookUpTableOfTheConfigPins[6][11]={{SSD_u8DISP1COM,SSD_u8DISP1SEGA,SSD_u8DISP1SEGB,SSD_u8DISP1SEGC,SSD_u8DISP1SEGD,SSD_u8DISP1SEGE,SSD_u8DISP1SEGF,SSD_u8DISP1SEGG,SSD_u8DISP1TYPE,SSD_u8DISP1INIT,SSD_u8DISP1INITSTATE},
@@ -29,41 +30,12 @@ u8 Global_u8CurrentValOfTheSS[6]={0};
 
 void SSD_voidInit(void) {
 	u8 local_u8Counter;
-	// TODO make the common
 	//to loop upon the SS in the lock up table according to the SSD_u8DISPLAYCOUNT
 	for (local_u8Counter = 0; local_u8Counter <SSD_u8DISPLAYCOUNT;local_u8Counter++) {
 		//initializ the ports as out put
 			//switch the kind of every SS if Common kathode OR Anode
-
-
-
-		DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^Togglebit(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPTYPEColInMap],0)));
-		SSD_u8Display(local_u8Counter+1,Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITColInMap]);
-
-/*		switch (Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPTYPEColInMap]) {
-		case SSD_u8COMMAND:
-			//write the common according to that operation
-			//(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8HIGH)=
-			//write low if the enable is high
-			//write high if the enable is low
-
-			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8HIGH));
-			//TODO dont forget to uncomment what come next
-			SSD_u8Display(local_u8Counter+1,Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITColInMap]);
-			break;
-		case SSD_u8COMMCATH:
-			//write the common according to that operation
-						//(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8HIGH)=
-						//write low if the enable is high
-						//write high if the enable is low
-			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^DIO_u8LOW));
-			//TODO dont forget to uncomment what come next
-			SSD_u8Display(local_u8Counter+1,Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITColInMap]);
-			break;
-		default:
-			break;
-		}*/
-
+	DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPCOMColInMap],(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITSTATEColInMap]^Togglebit(Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPTYPEColInMap],0)));
+    SSD_u8Display(local_u8Counter+1,Global_u8LookUpTableOfTheConfigPins[local_u8Counter][SSD_u8DISPINITColInMap]);
 	}
 }
 
@@ -116,14 +88,14 @@ extern u8 SSD_u8GetVal(u8 copy_u8DispIdx, u8* copy_u8DispVal) {
 /*comment!:Turn the SS ON*/
 u8 SSD_u8TurnOn(u8 copy_u8DispIdx) {
 	u8 local_u8OperationStatus = OK;
-	if (copy_u8DispIdx < SSD_u8DISPLAYCOUNT) {
+	if (copy_u8DispIdx <= SSD_u8DISPLAYCOUNT) {
 
-		switch (Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPCOMColInMap]) {
+		switch (Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPTYPEColInMap]) {
 		case SSD_u8COMMAND:
-			DIO_u8WritePortVal(SSD_u8DISP1COM, DIO_u8HIGH);
+			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPCOMColInMap],DIO_u8LOW );
 			break;
 		case SSD_u8COMMCATH:
-			DIO_u8WritePortVal(SSD_u8DISP1COM, DIO_u8LOW);
+			DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPCOMColInMap], DIO_u8HIGH);
 			break;
 		default:
 			break;
@@ -137,14 +109,14 @@ u8 SSD_u8TurnOn(u8 copy_u8DispIdx) {
 /*comment!:Turn the SS OFF*/
 u8 SSD_u8TurnOff(u8 copy_u8DispIdx) {
 	u8 local_u8OperationStatus = OK;
-		if (copy_u8DispIdx < SSD_u8DISPLAYCOUNT) {
+		if (copy_u8DispIdx <= SSD_u8DISPLAYCOUNT) {
 
-			switch (Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPCOMColInMap]) {
+			switch (Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPTYPEColInMap]) {
 			case SSD_u8COMMAND:
-				DIO_u8WritePortVal(SSD_u8DISP1COM, DIO_u8LOW);
+				DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPCOMColInMap], DIO_u8HIGH);
 				break;
 			case SSD_u8COMMCATH:
-				DIO_u8WritePortVal(SSD_u8DISP1COM, DIO_u8HIGH);
+				DIO_u8WritePinVal(Global_u8LookUpTableOfTheConfigPins[copy_u8DispIdx - 1][SSD_u8DISPCOMColInMap], DIO_u8LOW);
 				break;
 			default:
 				break;
@@ -154,5 +126,33 @@ u8 SSD_u8TurnOff(u8 copy_u8DispIdx) {
 			local_u8OperationStatus = ERROR;
 		}
 		return local_u8OperationStatus;
+}
+
+
+extern u8 SSD_u8DisplayMultiScreen(u8 copy_u8StartSS, u8 copy_u8EndSS,
+		u8 copy_u8Delay, u16 copy_u8DispVal) {
+	u8 local_u8Counter,local_u8Digtit,local_u8OperationStatus=OK;
+
+	for (local_u8Counter = copy_u8StartSS; local_u8Counter <= copy_u8EndSS;
+			local_u8Counter++) {
+	//	while (copy_u8DispVal < 0)
+
+
+		if(copy_u8DispVal>0)
+		{
+		local_u8Digtit=copy_u8DispVal%10;
+		local_u8OperationStatus=SSD_u8Display(local_u8Counter-1,local_u8Digtit);
+		SSD_u8TurnOn(local_u8Counter-1);
+		Delay(copy_u8Delay);
+		SSD_u8TurnOff(local_u8Counter-1);
+		copy_u8DispVal/=10;
+		}
+		else{
+			break;
+		}
+
+	}
+
+	return local_u8OperationStatus;
 }
 
