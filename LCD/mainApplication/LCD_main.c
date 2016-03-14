@@ -25,6 +25,12 @@ int main(void) {
 	DIO_voidInit();
 	LCD_VOIDInit();
 
+	////////////////////////////////////////////////////
+
+
+
+	///////////////////////////////////////////////////////////
+
 
 	LCD_voidUploadCustomChar(0,glopal_u8mimecharacter);
 	LCD_voidUploadCustomChar(1,glopal_u8haacharacter);
