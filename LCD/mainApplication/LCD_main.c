@@ -77,9 +77,7 @@ int main(void) {
 	lCD_u8CLRScreen();
 
 	while (1) {
-/////////////////////////////////////////
  local_u16TheADCVAL=ADC_u16ReadChannelOneShot(ADC_U8Channel1,&local_u8convflag);
-///////////////////////////////////////////////
 // DIO_u8WritePortVal(3,local_u16TheADCVAL);
 //lCD_u8CLRScreen();
  LCD_arabicmode();
@@ -87,9 +85,9 @@ int main(void) {
  if(local_u16TheADCVAL>512)
  {
 
-	 DIO_u8WritePinVal(DIO_u8PIN31,DIO_u8HIGH);
+	 DIO_u8WritePinVal(DIO_u8PIN23,DIO_u8HIGH);
  }
- else{	 DIO_u8WritePinVal(DIO_u8PIN31,DIO_u8LOW);
+ else{	 DIO_u8WritePinVal(DIO_u8PIN23,DIO_u8LOW);
 }
  while(counter<=3)
  {
@@ -105,7 +103,7 @@ int main(void) {
 return 0;
 }
 
-
+void stepperR()
 
 
 
