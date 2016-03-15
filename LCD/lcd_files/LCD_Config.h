@@ -21,9 +21,9 @@
 #define LCD_u8D7 DIO_u8PIN15
 
 //Controll bus
-#define LCD_u8RS DIO_u8PIN0
-#define LCD_u8RW DIO_u8PIN1
-#define LCD_u8Enable DIO_u8PIN2
+#define LCD_u8RS DIO_u8PIN18
+#define LCD_u8RW DIO_u8PIN17
+#define LCD_u8Enable DIO_u8PIN16
 
 //INIT STATE OF THE LCD
 //TODO make the define of the status on or off

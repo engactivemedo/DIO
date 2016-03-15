@@ -11,6 +11,7 @@
 #include"../headerfiles/DIOFiles/DIO_Interface.h"
 #include"../headerfiles/DelayFiles/Delay_prog.c"
 #include"../lcd_files/LCD_Interface.h"
+#include"../ADC_files/ADC_Interface.h"
 
 u8 glopal_u8mimecharacter[8]={0x0,0x7,0x5,0x1f,0x10,0x10,0x10,0x10};
 
@@ -21,15 +22,24 @@ u8 glopal_u8wowcharacter[8]={0xe,0x11,0x11,0xf,0x1,0x3,0x4,0x18};
 u8 glopal_u8dalcharacter[8]={0x4,0x2,0x1,0x1,0x1,0x1,0x1e,0x8};
 
 
+#define ADCSRA                     *((volatile u8*)(0x26))
+#define ADMUX                      *((volatile u8*)(0x27))
+#define ADCL                       *((volatile u8*)(0x24))
+#define ADCH                       *((volatile u8*)(0x25))
+
 int main(void) {
+	u8 local_valtoWrite=0;
+	u16 local_u16TheADCVAL=0x00;
+	u8 local_u8convflag=0;
 	DIO_voidInit();
 	LCD_VOIDInit();
 
 	////////////////////////////////////////////////////
-
-
+	ADC_voidinit();
+	ADC_voidEnable();
 
 	///////////////////////////////////////////////////////////
+
 
 
 	LCD_voidUploadCustomChar(0,glopal_u8mimecharacter);
@@ -45,6 +55,7 @@ int main(void) {
 	LCD_u8WriteData(0X00);
 
 
+
 	LCD_u8GotoXY(2,11);
 	LCD_arabicmode();
 	LCD_u8WriteData(0X00);
@@ -55,11 +66,17 @@ int main(void) {
 
 
 
+	LCD_arabicmode();
 
-
-
+	DIO_u8WritePortDir(3,0xff);
+	//DIO_u8WritePortDir(2,0xff);
+	DIO_u8WritePortDir(3,0XFF);
 	while (1) {
-
+/////////////////////////////////////////
+ ADC_voidEnable();
+ local_u16TheADCVAL=ADC_u16ReadChannelOneShot(ADC_U8Channel1,&local_u8convflag);
+///////////////////////////////////////////////
+ DIO_u8WritePortVal(3,local_u16TheADCVAL);
 	}
 return 0;
 }

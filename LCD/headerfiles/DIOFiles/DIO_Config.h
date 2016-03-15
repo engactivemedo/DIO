@@ -12,7 +12,7 @@
 /*Range!   : DIO_u8INPUT ~ DIO_u8OUTPUT   */
 
 
-#define DIO_u8PIN0_INITDIR         DIO_u8OUTPUT
+#define DIO_u8PIN0_INITDIR         DIO_u8INPUT
 #define DIO_u8PIN1_INITDIR         DIO_u8OUTPUT
 #define DIO_u8PIN2_INITDIR         DIO_u8OUTPUT
 #define DIO_u8PIN3_INITDIR         DIO_u8OUTPUT
