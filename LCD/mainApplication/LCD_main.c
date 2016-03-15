@@ -12,6 +12,7 @@
 #include"../headerfiles/DelayFiles/Delay_prog.c"
 #include"../lcd_files/LCD_Interface.h"
 #include"../ADC_files/ADC_Interface.h"
+void stepperR(u8 copy_u8,u8 copy_u8Direction);
 
 u8 glopal_u8mimecharacter[8]={0x0,0x7,0x5,0x1f,0x10,0x10,0x10,0x10};
 
@@ -102,8 +103,38 @@ int main(void) {
 	}
 return 0;
 }
+#define SteperMotorPort DIO_u8PORT2
+void stepperR(u8 copy_u8Speed,u8 copy_u8Direction)
+{ u8 static variable1=0x01;
+  u8 static variable2=0x08;
 
-void stepperR()
+
+
+	switch(copy_u8Direction)
+	{
+	case 0:
+
+		DIO_u8WritePortVal(SteperMotorPort,variable1);
+		variable1<<=1;
+		Delay(copy_u8Speed);
+		if(variable1==0x08)
+					{variable1=0x01;}
+		break;
+	case 1:
+
+		DIO_u8WritePortVal(SteperMotorPort,variable2);
+				variable2>>=1;
+				Delay(copy_u8Speed);
+				if(variable1==0x01)
+							{variable1=0x08;}
+		break;
+
+	default:
+		break;
+	}
+
+
+}
 
 
 
