@@ -28,9 +28,11 @@ u8 glopal_u8dalcharacter[8]={0x4,0x2,0x1,0x1,0x1,0x1,0x1e,0x8};
 #define ADCH                       *((volatile u8*)(0x25))
 
 int main(void) {
+	u8 counter=0;
 	u8 local_valtoWrite=0;
 	u16 local_u16TheADCVAL=0x00;
 	u8 local_u8convflag=0;
+	u8 local_u8ASCIIToDisplay=0;
 	DIO_voidInit();
 	LCD_VOIDInit();
 
@@ -66,17 +68,39 @@ int main(void) {
 
 
 
-	LCD_arabicmode();
+	//
 
 	DIO_u8WritePortDir(3,0xff);
 	//DIO_u8WritePortDir(2,0xff);
 	DIO_u8WritePortDir(3,0XFF);
+	 ADC_voidEnable();
+	lCD_u8CLRScreen();
+
 	while (1) {
 /////////////////////////////////////////
- ADC_voidEnable();
  local_u16TheADCVAL=ADC_u16ReadChannelOneShot(ADC_U8Channel1,&local_u8convflag);
 ///////////////////////////////////////////////
- DIO_u8WritePortVal(3,local_u16TheADCVAL);
+// DIO_u8WritePortVal(3,local_u16TheADCVAL);
+//lCD_u8CLRScreen();
+ LCD_arabicmode();
+ LCD_u8GotoXY(2,8);
+ if(local_u16TheADCVAL>512)
+ {
+
+	 DIO_u8WritePinVal(DIO_u8PIN31,DIO_u8HIGH);
+ }
+ else{	 DIO_u8WritePinVal(DIO_u8PIN31,DIO_u8LOW);
+}
+ while(counter<=3)
+ {
+	 local_u8ASCIIToDisplay=local_u16TheADCVAL%10;
+	 local_u16TheADCVAL/=10;
+	 local_u8ASCIIToDisplay+=48;
+	 LCD_u8WriteData(local_u8ASCIIToDisplay);
+	 counter++;
+ }
+ counter=0;
+
 	}
 return 0;
 }

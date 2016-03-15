@@ -37,5 +37,6 @@ extern u8 LCD_u8Writecommand(u8 copy_u8Command);
 extern u8 LCD_u8WriteData(u8 copy_u8Data);
 /*comment!: initialize the special char in gcRAM */
 extern void LCD_voidInitSpecialchar(void);
+extern u8 lCD_u8CLRScreen(void);
 
 #endif /* LCD_INTERFACE_H_ */
