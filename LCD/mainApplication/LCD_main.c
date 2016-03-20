@@ -12,6 +12,7 @@
 #include"../headerfiles/DelayFiles/Delay_prog.c"
 #include"../lcd_files/LCD_Interface.h"
 #include"../ADC_files/ADC_Interface.h"
+#include"../headerfiles/keypadsFiles/KeyPad_Interface.h"
 
 #define SteperMotorPort DIO_u8PORT3
 
@@ -37,6 +38,7 @@ int main(void) {
 	u16 local_u16TheADCVAL=0x00;
 	u8 local_u8convflag=0;
 	u8 local_u8ASCIIToDisplay=0;
+	u8 local_u8ButtonRead;
 	DIO_voidInit();
 	LCD_VOIDInit();
 
@@ -81,17 +83,40 @@ int main(void) {
 	lCD_u8CLRScreen();
 
 	while (1) {
+
+
  local_u16TheADCVAL=ADC_u16ReadChannelOneShot(ADC_U8Channel1,&local_u8convflag);
-// DIO_u8WritePortVal(3,local_u16TheADCVAL);
-//lCD_u8CLRScreen();
  LCD_arabicmode();
  LCD_u8GotoXY(2,8);
+ KeyPad_u8DebouncingSol(21,&local_u8ButtonRead);
+ if(local_u8ButtonRead==1){
+	 lCD_u8CLRScreen();
+	 do{ KeyPad_u8DebouncingSol(21,&local_u8ButtonRead);
+}while(local_u8ButtonRead==1);
+
+ }
+ else{}
+/*//todo try to put the push buton read here
  if(local_u16TheADCVAL>512)
  {
 
-	 DIO_u8WritePinVal(DIO_u8PIN23,DIO_u8HIGH);
  }
  else{	 DIO_u8WritePinVal(DIO_u8PIN23,DIO_u8LOW);
+}
+*/
+
+ if(local_u16TheADCVAL>523){
+
+	 stepperR(((499-(local_u16TheADCVAL-524))/125),1);
+	 DIO_u8WritePinVal(DIO_u8PIN23,DIO_u8LOW);
+
+ }
+ else if(local_u16TheADCVAL<501){
+	 stepperR(((local_u16TheADCVAL)/125),0);
+	 DIO_u8WritePinVal(DIO_u8PIN23,DIO_u8LOW);
+
+}
+ else{	 DIO_u8WritePinVal(DIO_u8PIN23,DIO_u8HIGH);
 }
  while(counter<=3)
  {
@@ -103,10 +128,11 @@ int main(void) {
  }
  counter=0;
 
+
+
 	}
 return 0;
 }
-#define SteperMotorPort DIO_u8PORT3
 void stepperR(u8 copy_u8Speed,u8 copy_u8Direction)
 { u8 static variable1=0x01;
   u8 static variable2=0x08;
@@ -120,16 +146,16 @@ void stepperR(u8 copy_u8Speed,u8 copy_u8Direction)
 		DIO_u8WritePortVal(SteperMotorPort,variable1);
 		variable1<<=1;
 		Delay(copy_u8Speed);
-		if(variable1==0x08)
+		if(variable1==0x10)
 					{variable1=0x01;}
 		break;
 	case 1:
 
 		DIO_u8WritePortVal(SteperMotorPort,variable2);
-				variable2>>=1;
 				Delay(copy_u8Speed);
-				if(variable1==0x01)
-							{variable1=0x08;}
+				variable2>>=1;
+				if(variable2==0x00)
+							{variable2=0x08;}
 		break;
 
 	default:
