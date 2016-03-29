@@ -3,9 +3,8 @@
 #include "KPD_config.h"
 #include "../DIOFiles/DIO_Interface.h"
 #include "Delay.h"
-#include "DIO-utilites.h"
-
-u8 KPD_State ;
+#include "../util.h"
+//u8 KPD_State ;
 const u8  KPD_Btns[]={0,
 		KPD_u8SW1_IDX ,KPD_u8SW2_IDX ,KPD_u8SW3_IDX ,KPD_u8SW4_IDX ,
 		KPD_u8SW5_IDX ,KPD_u8SW6_IDX ,KPD_u8SW7_IDX ,KPD_u8SW8_IDX ,
@@ -13,28 +12,29 @@ const u8  KPD_Btns[]={0,
 		KPD_u8SW13_IDX,KPD_u8SW14_IDX,KPD_u8SW15_IDX,KPD_u8SW16_IDX
          };
 const u8 KPD_MAP[5]={1,2,3,0,4};
+//const u8 KPD_MAP[5]={0,1,2,3,4};
+
 const u8 ChkErr[2]={1,0};
 extern void KPD_voidInit()
 {
-	KPD_State=0 ;
+//	KPD_State=0 ;
 	//make the port low nibbles pulled up
-	DIO_u8WritePortVal(DIO_u8PORT0,0x0f);
+	DIO_u8WritePortVal(DIO_u8PORT0,0xf0);
 }
 
 extern void KPD_u8Read(u8 *Copy_PtrToBtnIdx)
 {
 	u8 Local_LoopCount;
-	u8 Local_OutCount=0 ;
+	//u8 Local_OutCount=0 ;
     u8 local_temp=0 ;
+    u8 KPD_State=0;
 
-
-	for(Local_LoopCount=1;Local_LoopCount<=8;Local_LoopCount*=2)
+	for(Local_LoopCount=1;Local_LoopCount<=8;Local_LoopCount<<=1)
 	{
-
-		    DIO_u8WritePinVal(KPD_u8Pin1,~ get_bit(Local_LoopCount,0));
-		    DIO_u8WritePinVal(KPD_u8Pin2,~ get_bit(Local_LoopCount,1));
-		    DIO_u8WritePinVal(KPD_u8Pin3,~ get_bit(Local_LoopCount,2));
-		    DIO_u8WritePinVal(KPD_u8Pin4,~ get_bit(Local_LoopCount,3));
+		    DIO_u8WritePinVal(KPD_u8Pin1,~ GetBit(Local_LoopCount,0));
+		    DIO_u8WritePinVal(KPD_u8Pin2,~ GetBit(Local_LoopCount,1));
+		    DIO_u8WritePinVal(KPD_u8Pin3,~ GetBit(Local_LoopCount,2));
+		    DIO_u8WritePinVal(KPD_u8Pin4,~ GetBit(Local_LoopCount,3));
 
 		    DIO_u8ReadPinValue(KPD_u8Pin5,& local_temp);
 		    KPD_State+=(!local_temp);
@@ -47,10 +47,23 @@ extern void KPD_u8Read(u8 *Copy_PtrToBtnIdx)
 
 		    if(KPD_State)
          {
-		    	//DIO_u8WritePinVal(16,1);
-        	 *Copy_PtrToBtnIdx=KPD_Btns[KPD_MAP[KPD_State/2]+(Local_OutCount*2)];
-        	 KPD_State=0;
-        	 break ;
+		    	switch(Local_LoopCount)
+		    	{
+		    	case 0x01:
+		    		//*Copy_PtrToBtnIdx=KPD_Btns[(KPD_State/2)+1];
+		        	 *Copy_PtrToBtnIdx=KPD_Btns[KPD_MAP[KPD_State/2]];
+
+		    		break;
+		    	case 0x02:
+		    		break;
+		    	case 0x04:
+		    		break;
+		    	case 0x08:
+		    		break;
+		    	default:
+		    		break;
+		    	}
+        	// break ;
 
          }
          else
@@ -58,7 +71,7 @@ extern void KPD_u8Read(u8 *Copy_PtrToBtnIdx)
         	 *Copy_PtrToBtnIdx=0;
          }
 
-    Local_OutCount+=2 ;
+		   // Local_OutCount+=2 ;
 	}
 	return ;
 }
