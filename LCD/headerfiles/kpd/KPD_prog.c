@@ -25,16 +25,16 @@ extern void KPD_voidInit()
 extern void KPD_u8Read(u8 *Copy_PtrToBtnIdx)
 {
 	u8 Local_LoopCount;
-	//u8 Local_OutCount=0 ;
+	u8 Local_OutCount=0 ;
     u8 local_temp=0 ;
     u8 KPD_State=0;
 
-	for(Local_LoopCount=1;Local_LoopCount<=8;Local_LoopCount<<=1)
+	for(Local_LoopCount=1;Local_LoopCount<=8;Local_LoopCount*=2)
 	{
-		    DIO_u8WritePinVal(KPD_u8Pin1,~ GetBit(Local_LoopCount,0));
-		    DIO_u8WritePinVal(KPD_u8Pin2,~ GetBit(Local_LoopCount,1));
-		    DIO_u8WritePinVal(KPD_u8Pin3,~ GetBit(Local_LoopCount,2));
-		    DIO_u8WritePinVal(KPD_u8Pin4,~ GetBit(Local_LoopCount,3));
+		    DIO_u8WritePinVal(KPD_u8Pin1,! GetBit(Local_LoopCount,0));
+		    DIO_u8WritePinVal(KPD_u8Pin2,! GetBit(Local_LoopCount,1));
+		    DIO_u8WritePinVal(KPD_u8Pin3,! GetBit(Local_LoopCount,2));
+		    DIO_u8WritePinVal(KPD_u8Pin4,! GetBit(Local_LoopCount,3));
 
 		    DIO_u8ReadPinValue(KPD_u8Pin5,& local_temp);
 		    KPD_State+=(!local_temp);
@@ -50,20 +50,28 @@ extern void KPD_u8Read(u8 *Copy_PtrToBtnIdx)
 		    	switch(Local_LoopCount)
 		    	{
 		    	case 0x01:
-		    		//*Copy_PtrToBtnIdx=KPD_Btns[(KPD_State/2)+1];
+
 		        	 *Copy_PtrToBtnIdx=KPD_Btns[KPD_MAP[KPD_State/2]];
+
 
 		    		break;
 		    	case 0x02:
+		        	 *Copy_PtrToBtnIdx=KPD_Btns[KPD_MAP[KPD_State/2]+(4)];
+
 		    		break;
 		    	case 0x04:
+		        	 *Copy_PtrToBtnIdx=KPD_Btns[KPD_MAP[KPD_State/2]+(8)];
+
 		    		break;
 		    	case 0x08:
+		        	 *Copy_PtrToBtnIdx=KPD_Btns[KPD_MAP[KPD_State/2]+(12)];
+
 		    		break;
 		    	default:
+
 		    		break;
 		    	}
-        	// break ;
+        	 break ;
 
          }
          else
@@ -71,8 +79,8 @@ extern void KPD_u8Read(u8 *Copy_PtrToBtnIdx)
         	 *Copy_PtrToBtnIdx=0;
          }
 
-		   // Local_OutCount+=2 ;
 	}
+
 	return ;
 }
 
