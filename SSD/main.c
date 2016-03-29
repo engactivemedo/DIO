@@ -134,7 +134,7 @@ u8 R[8][1]={{0b00000000},
 
 
 
-#define coulmn PORTA
+#define coulmn PORTC
 #define Row  PORTD
 
 // move righ function
