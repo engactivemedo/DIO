@@ -11,7 +11,7 @@
 #include"../headerfiles/DIOFiles/DIO_Interface.h"
 #include"../headerfiles/DelayFiles/Delay_prog.c"
 #include"../lcd_files/LCD_Interface.h"
-#include"../ADC_files/ADC_Interface.h"
+//#include"../ADC_files/ADC_Interface.h"
 
 u8 glopal_u8mimecharacter[8]={0x0,0x7,0x5,0x1f,0x10,0x10,0x10,0x10};
 
@@ -29,18 +29,13 @@ u8 glopal_u8dalcharacter[8]={0x4,0x2,0x1,0x1,0x1,0x1,0x1e,0x8};
 
 int main(void) {
 	u8 counter=0;
-	u8 local_valtoWrite=0;
 	u16 local_u16TheADCVAL=0x00;
-	u8 local_u8convflag=0;
 	u8 local_u8ASCIIToDisplay=0;
 	DIO_voidInit();
 	LCD_VOIDInit();
 
-	////////////////////////////////////////////////////
-	ADC_voidinit();
-	ADC_voidEnable();
 
-	///////////////////////////////////////////////////////////
+
 
 
 
@@ -78,7 +73,7 @@ int main(void) {
 
 	while (1) {
 /////////////////////////////////////////
- local_u16TheADCVAL=ADC_u16ReadChannelOneShot(ADC_U8Channel1,&local_u8convflag);
+// local_u16TheADCVAL=ADC_u16ReadChannelOneShot(ADC_U8Channel1,&local_u8convflag);
 ///////////////////////////////////////////////
 // DIO_u8WritePortVal(3,local_u16TheADCVAL);
 //lCD_u8CLRScreen();
