@@ -13,6 +13,10 @@
 #include"../headerfiles/kpd/KPD_interface.h"
 #include"../headerfiles/tetris/Tertris_App.h"
 
+
+#define XPositionStart 2
+#define  YPositionStart	4
+
 #define TIMER0_u8TCCR0  *((volatile u8*)(0x53))
 #define TIMER0_u8TCNT0  *((volatile u8*)(0X52))
 #define TIMER0_u8TIMSK  *((volatile u8*)(0X59))
@@ -40,18 +44,26 @@
 		void vector(void)
 
 
-#define DOTMATRIXREFRSHMENTRATE  3		//5ms
+#define DOTMATRIXREFRSHMENTRATE  4		//5ms
 #define MOVINGPARTSTIME			 245   //1sec
 #define MOVINGPARTSTIME2x		 122	//.5 sec
 
 #define SMALLARRAY  arrayToTest
 #define bigArray 	DotMatrix
 
+
+
 #define coulmn DIO_u8PORT2
 #define Row  DIO_u8PORT3
 
 
  extern u8 DotMatrix[8][8];
+ extern u8 background[8][8];
+ //extern u8 movingpart[8][8];
+
+ u8 Glopal_u8PartXPosition=XPositionStart;
+ u8 Glopal_u8PartYPosition=YPositionStart;
+
 
 u8 glopal_u8mimecharacter[8] = { 0x0, 0x7, 0x5, 0x1f, 0x10, 0x10, 0x10, 0x10 };
 
@@ -61,13 +73,13 @@ u8 glopal_u8wowcharacter[8] = { 0xe, 0x11, 0x11, 0xf, 0x1, 0x3, 0x4, 0x18 };
 
 u8 glopal_u8dalcharacter[8] = { 0x4, 0x2, 0x1, 0x1, 0x1, 0x1, 0x1e, 0x8 };
 
-u8 arrayToTest[8][1]={{0b11000000},
-					  {0b10100000},
-					  {0b10010000},
-					  {0b10001000},
-					  {0b10000100},
-					  {0b10000010},
-					  {0b10000000},
+u8 arrayToTest[8][1]={{0b00000000},
+					  {0b10001011},
+					  {0b00010000},
+					  {0b10010110},
+					  {0b11010010},
+					  {0b11001011},
+					  {0b00010000},
 					  {0b11111111}};
 
 
@@ -119,42 +131,12 @@ void Display_OnDotMatrix(){
 }
 
 
-//timer 0 over flow ISR
-ISR(__vector_11)
-{	static u8 local_u8Timer0OVFCountermovingpart=0;
-	static u8 local_u8Timer0OVFCounterledmatrix=0;
-
-	local_u8Timer0OVFCountermovingpart++;
-	local_u8Timer0OVFCounterledmatrix++;
-
-	//its time to refresh the dot matrix
-	if(local_u8Timer0OVFCounterledmatrix==DOTMATRIXREFRSHMENTRATE){
-		local_u8Timer0OVFCounterledmatrix=0;
-		Display_OnDotMatrix();
-
-	}
-	else{}
-
-	//its time to move the part on the dot matrix
-	if(local_u8Timer0OVFCountermovingpart==MOVINGPARTSTIME)
-	{
-		local_u8Timer0OVFCountermovingpart=0;
-				arrayToTest[0][0]=Togglebit(arrayToTest[0][0],0);
-		MatrixFlow();
-	}
-	else{}
-
-
-}
-
 
 void convert8by8to8by0matrix()
 {u8 local_u8Rowcounter=0,local_u8colcounter=0;
 
-
-
 //start critical section
-	__asm__("CLI");
+	//__asm__("CLI");
 
 	for (local_u8Rowcounter = 0; local_u8Rowcounter < 8; local_u8Rowcounter++) {
 		for (local_u8colcounter = 0; local_u8colcounter < 8;
@@ -171,8 +153,105 @@ void convert8by8to8by0matrix()
 	}
 
 //the  end  of the critical section
-	__asm__("SEI");
+	//__asm__("SEI");
 }
+
+
+u8 * ShapeCapture(u8 Copy_u8TimerVal) {
+
+	return ShapesPtr[Copy_u8TimerVal%7];
+
+}
+
+
+void CheckBackGrnd(void){
+
+	u8 row,col,currentRow, i , j;
+	u8 counter =0, flag=0;
+	for (row=0;row<8 && flag==0;row++){
+		for (col=0;col<8;col++){
+
+			if(background[row][col]==0){
+				counter=0;
+				break;
+			}
+			else{
+				counter ++;
+
+			}
+
+			}
+		if(counter != 0){
+			flag=1;
+			counter=0;
+			currentRow=row--;
+			break;
+		}
+	}
+	if (flag==1){
+
+			for (i=currentRow; i >= 0 ; i --){
+				for (j=0; j < 8 ; j ++){
+					background[currentRow+1][j]=background[currentRow][j];
+							}
+
+			}
+
+
+	}
+
+	return ;
+}
+//timer 0 over flow ISR
+ISR(__vector_11) {
+	static u8 local_u8Timer0OVFCountermovingpart = 0;
+	static u8 local_u8Timer0OVFCounterledmatrix = 0;
+	u8 local_u8collisionflag=0;
+	u8 TimeVal;
+
+	local_u8Timer0OVFCountermovingpart++;
+	local_u8Timer0OVFCounterledmatrix++;
+
+	//its time to refresh the dot matrix
+	if (local_u8Timer0OVFCounterledmatrix == DOTMATRIXREFRSHMENTRATE) {
+
+		local_u8Timer0OVFCounterledmatrix = 0;
+		Display_OnDotMatrix();
+
+	} else {
+	}
+
+	//its time to move the part on the dot matrix
+	if (local_u8Timer0OVFCountermovingpart == MOVINGPARTSTIME) {
+		local_u8Timer0OVFCountermovingpart = 0;
+		//arrayToTest[0][0] = Togglebit(arrayToTest[0][0], 0);
+
+		//  MatrixRotate(Lshape,temparr);
+		MatrixAdditionAtXY(temparr, Glopal_u8PartXPosition,
+				Glopal_u8PartYPosition);//adding the part to the DotMatrix or the moving parts
+		 check4collisioion(& local_u8collisionflag);
+		 if(local_u8collisionflag==0)
+		 {
+		addingThebackgroundTotheMovingPart();
+		//TODO you should add the DotMatrix +the BAckground==matrixToDisplay
+		convert8by8to8by0matrix();			//TODO DISPLAY THE movingpart
+		Glopal_u8PartXPosition++;
+		 }else{Glopal_u8PartXPosition=XPositionStart;
+			Glopal_u8PartYPosition=YPositionStart;
+			Timer0_voidReadTimer0TCNT0(&TimeVal);
+			MatrixEquality(temparr,ShapeCapture(TimeVal));
+
+			//updat the background;
+			updateThebackground();
+			CheckBackGrnd();
+
+			}
+	} else {
+	}
+
+}
+
+
 
 
 int main(void) {
@@ -180,25 +259,107 @@ int main(void) {
 	u8 counter = 0;
 	u8 local_u8_keypadVal = 0x00;
 	u8 local_u8ASCIIToDisplay = 0;
+	u8 TimeVal;
+	u8 local_u8collisionflag=0;
 	// char Strings[5]="";
 	DIO_voidInit();
 	//LCD_VOIDInit();
 	KPD_voidInit();
 	Timer0_voidInit();
-    MatrixRotate(Lshape,temparr);
-	MatrixAddition(temparr);
-	convert8by8to8by0matrix();
+//    MatrixRotate(Lshape,temparr);
+//	MatrixAddition(temparr);
+//	convert8by8to8by0matrix();
+
+	// to copy the shape array to the temp array
+	MatrixEquality(temparr,LTIshape);
 
 	while (1) {
 
 		KPD_u8Read(&local_u8_keypadVal);
 		if(local_u8_keypadVal!=oldVal)
 		{
+			switch(local_u8_keypadVal)
+			{
+			//left
+			case 5:
+				if (Glopal_u8PartYPosition == 1) {
+
+				} else {
+					Glopal_u8PartYPosition--;
+				}
+				break;
+			//right
+			case 7:
+				if (Glopal_u8PartYPosition > 6) {
+				} else {
+					Glopal_u8PartYPosition++;
+				}
+				break;
+				//rotate
+			case 6:
+
+				MatrixRotateInTheSameMatrix(temparr);
+				break;
+				//fast down
+			case 10:
+				if(Glopal_u8PartXPosition!=8)
+				{
+				Glopal_u8PartXPosition++;
+				}
+				break;
+
+			default:
+				break;
+
+
+			}
+			MatrixAdditionAtXY(temparr,Glopal_u8PartXPosition,Glopal_u8PartYPosition);
+			__asm__("CLI");
+			check4collisioion(& local_u8collisionflag);
+					 if(local_u8collisionflag==0)
+					 {
+			addingThebackgroundTotheMovingPart();
+			convert8by8to8by0matrix();
+					 }
+					 else{Glopal_u8PartXPosition=XPositionStart;
+					 				Glopal_u8PartYPosition=YPositionStart;
+					 				Timer0_voidReadTimer0TCNT0(&TimeVal);
+					 				MatrixEquality(temparr,ShapeCapture(TimeVal));
+
+					 				//updat the background;
+					 				updateThebackground();
+					 				CheckBackGrnd();
+
+
+					 				}
+					 __asm__("SEI");
 			oldVal=local_u8_keypadVal;
-		arrayToTest[2][0]=local_u8_keypadVal;
 		}
 		else
 		{}
+		//check for collision
+
+		if(Glopal_u8PartXPosition>8)
+		{
+	    Glopal_u8PartXPosition=XPositionStart;
+		Glopal_u8PartYPosition=YPositionStart;
+		Timer0_voidReadTimer0TCNT0(&TimeVal);
+		MatrixEquality(temparr,ShapeCapture(TimeVal));
+
+		//updat the background;
+		updateThebackground();
+		 __asm__("CLI");
+
+		CheckBackGrnd();
+		 __asm__("SEI");
+
+
+		}
+		else{
+
+
+		}
+
 	}
 	return 0;
 }
