@@ -14,10 +14,9 @@
 							 { 0, 0, 0, 0, 0, 0, 0, 0 },
 							 { 0, 0, 0, 0, 0, 0, 0, 0 },
 							 { 0, 0, 0, 0, 0, 0, 0, 0 },
-	                         { 0, 0, 0, 0, 0, 0, 0, 0 } };
+	                         { 0, 0, 0, 0, 0, 0, 0, 0 }};
 
-
- u8 movingpart[8][8] =	 { { 0, 0, 0, 0, 0, 0, 0, 0 },
+ u8 movingpart[8][8] =	   { { 0, 0, 0, 0, 0, 0, 0, 0 },
 		                     { 0, 0, 0, 0, 0, 0, 0, 0 },
 							 { 0, 0, 0, 0, 0, 0, 0, 0 },
 							 { 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -59,18 +58,20 @@ void MatrixEquality(u8 Copy_u8PtrToMatrix[][2], u8 Copy_u8PtrTonewMatrix[][2])
 
 }
 
-void MatrixRotateInTheSameMatrix(u8 Copy_u8PtrToMatrix[][2] ) {
+void MatrixRotateInTheSameMatrix(u8 Copy_u8PtrToMatrix[][2]) {
 	u8 i, j;
 	u8 Copy_u8PtrTonewMatrix[2][2]={{0,0},{0,0}};
-	__asm__("CLI");
-	for (i = 0; i < 2; ++i) {
-		for (j = 0; j < 2; ++j) {
-			Copy_u8PtrTonewMatrix[i][j] = Copy_u8PtrToMatrix[2 - j - 1][i];
-		}
-	}
 
-	MatrixEquality(Copy_u8PtrToMatrix,Copy_u8PtrTonewMatrix);
-	__asm__("SEI");
+		__asm__("CLI");
+		for (i = 0; i < 2; ++i) {
+			for (j = 0; j < 2; ++j) {
+				Copy_u8PtrTonewMatrix[i][j] = Copy_u8PtrToMatrix[2 - j - 1][i];
+			}
+		}
+
+		MatrixEquality(Copy_u8PtrToMatrix,Copy_u8PtrTonewMatrix);
+		__asm__("SEI");
+
 }
 
 

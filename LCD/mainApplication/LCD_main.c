@@ -16,7 +16,6 @@
 
 #define XPositionStart 2
 #define  YPositionStart	4
-
 #define TIMER0_u8TCCR0  *((volatile u8*)(0x53))
 #define TIMER0_u8TCNT0  *((volatile u8*)(0X52))
 #define TIMER0_u8TIMSK  *((volatile u8*)(0X59))
@@ -59,7 +58,7 @@
 
  extern u8 DotMatrix[8][8];
  extern u8 background[8][8];
- //extern u8 movingpart[8][8];
+ extern u8 movingpart[8][8];
 
  u8 Glopal_u8PartXPosition=XPositionStart;
  u8 Glopal_u8PartYPosition=YPositionStart;
@@ -73,12 +72,12 @@ u8 glopal_u8wowcharacter[8] = { 0xe, 0x11, 0x11, 0xf, 0x1, 0x3, 0x4, 0x18 };
 
 u8 glopal_u8dalcharacter[8] = { 0x4, 0x2, 0x1, 0x1, 0x1, 0x1, 0x1e, 0x8 };
 
-u8 arrayToTest[8][1]={{0b00000000},
-					  {0b10001011},
+u8 arrayToTest[8][1]={{0b00010000},
 					  {0b00010000},
-					  {0b10010110},
-					  {0b11010010},
-					  {0b11001011},
+					  {0b00010000},
+					  {0b00010000},
+					  {0b00010000},
+					  {0b00010000},
 					  {0b00010000},
 					  {0b11111111}};
 
@@ -135,6 +134,8 @@ void Display_OnDotMatrix(){
 void convert8by8to8by0matrix()
 {u8 local_u8Rowcounter=0,local_u8colcounter=0;
 
+
+
 //start critical section
 	//__asm__("CLI");
 
@@ -166,33 +167,35 @@ u8 * ShapeCapture(u8 Copy_u8TimerVal) {
 
 void CheckBackGrnd(void){
 
+
 	u8 row,col,currentRow, i , j;
 	u8 counter =0, flag=0;
 	for (row=0;row<8 && flag==0;row++){
 		for (col=0;col<8;col++){
 
-			if(background[row][col]==0){
+			if(!background[row][col]){
 				counter=0;
 				break;
 			}
 			else{
 				counter ++;
-
+				if(counter == 8){
+					flag=1;
+					counter=0;
+					currentRow=--row;
+					break;
+				}
 			}
 
 			}
-		if(counter != 0){
-			flag=1;
-			counter=0;
-			currentRow=row--;
-			break;
-		}
 	}
 	if (flag==1){
 
-			for (i=currentRow; i >= 0 ; i --){
+		flag=0;
+
+			for (i=currentRow; i > 0 ; i --){
 				for (j=0; j < 8 ; j ++){
-					background[currentRow+1][j]=background[currentRow][j];
+					background[i+1][j]=background[i][j];
 							}
 
 			}
@@ -261,6 +264,7 @@ int main(void) {
 	u8 local_u8ASCIIToDisplay = 0;
 	u8 TimeVal;
 	u8 local_u8collisionflag=0;
+	u8 localCounter=0,lastCoulFlag=0;
 	// char Strings[5]="";
 	DIO_voidInit();
 	//LCD_VOIDInit();
@@ -282,6 +286,7 @@ int main(void) {
 			{
 			//left
 			case 5:
+
 				if (Glopal_u8PartYPosition == 1) {
 
 				} else {
@@ -341,6 +346,20 @@ int main(void) {
 
 		if(Glopal_u8PartXPosition>8)
 		{
+			 __asm__("CLI");
+
+			for (localCounter = 0; localCounter < 8; localCounter++) {
+				lastCoulFlag = 0;
+				if (movingpart[7][localCounter] == 1) {
+					lastCoulFlag = 1;
+					break;
+				} else {
+				}
+				 __asm__("SEI");
+			}
+
+			if(lastCoulFlag==1)
+			{
 	    Glopal_u8PartXPosition=XPositionStart;
 		Glopal_u8PartYPosition=YPositionStart;
 		Timer0_voidReadTimer0TCNT0(&TimeVal);
@@ -348,11 +367,10 @@ int main(void) {
 
 		//updat the background;
 		updateThebackground();
-		 __asm__("CLI");
-
+		__asm__("CLI");
 		CheckBackGrnd();
 		 __asm__("SEI");
-
+			}else{}
 
 		}
 		else{
@@ -363,4 +381,3 @@ int main(void) {
 	}
 	return 0;
 }
-
