@@ -11,7 +11,7 @@
 #include"../headerfiles/types.h"
 
 static void (* Timer0_InteruptPointer)(void);
-static u8 glopal_u8tcnt0StartVal=0;
+static void (* Timer0_InteruptPointerTCNT0)(void);
 
 
 void Timer0_voidSet_ISR(void (*Copy_PtrToISR)(void))
@@ -19,23 +19,31 @@ void Timer0_voidSet_ISR(void (*Copy_PtrToISR)(void))
 	Timer0_InteruptPointer=Copy_PtrToISR;
 }
 
+void Timer0_voidSet_ISRCompareMatch(void (*Copy_PtrToISR)(void))
+{
+	Timer0_InteruptPointerTCNT0=Copy_PtrToISR;
+}
+
+
 void Timer0_voidInit(void)
 {
 		//	//the prescaler =64
-			//TIMER0_u8TCCR0=0X03;
-	//	//the prescaler =1
-				TIMER0_u8TCCR0=0X01;
-
-	//		TIMER0_u8TIMSK=Setbit(TIMER0_u8TIMSK,TIMER0_u8TIMSK_TOIE0);
+			TIMER0_u8TCCR0=0X03;
+			TIMER0_u8TIMSK=Setbit(TIMER0_u8TIMSK,TIMER0_u8TIMSK_TOIE0);//over flow Iterupt Interupt
+			TIMER0_u8TIMSK=Setbit(TIMER0_u8TIMSK,TIMER0_u8TIMSK_TOCIE0);//COMPARE MATCH iNTERUPT
 			//enable Glopal Interupt
+			TIMER0_u8OCR0=0xff;
 			__asm__("SEI");
 }
-
 void Timer0_voidReadTimer0TCNT0(u8 *ptrToVal)
 {
 	*ptrToVal=TIMER0_u8TCNT0;
 }
 
+void Timer0_voidsetTimerOCR0(u8 ptrToVal){
+
+	TIMER0_u8OCR0=ptrToVal;
+}
 
 void Timer0_voidCheckForInterupt(u8 *ptrToValOverflow,u8 *ptrToValCompareMatch)
 {
@@ -44,29 +52,13 @@ void Timer0_voidCheckForInterupt(u8 *ptrToValOverflow,u8 *ptrToValCompareMatch)
 }
 
 
-void Timer0_voidWriteTimer0TCNT0(u8 copy_u8ValToWrite){
-
-	TIMER0_u8TCNT0=copy_u8ValToWrite;
-
-}
-void Timer0_voidWriteTimer0TCNT0Permenant(u8 copy_u8ValToWrite) {
-	glopal_u8tcnt0StartVal = copy_u8ValToWrite;
-}
-
-void Timer0_voidSetTimerOVFInterupt(void)
-{
-	TIMER0_u8TIMSK=Setbit(TIMER0_u8TIMSK,TIMER0_u8TIMSK_TOIE0);
-
-}
-
-
-void Timer0_voidClrTimerOVFInterupt(void)
-{
-	TIMER0_u8TIMSK=Clrbit(TIMER0_u8TIMSK,TIMER0_u8TIMSK_TOIE0);
-
-}
 //timer 0 over flow ISR
 ISR(__vector_11) {
-	TIMER0_u8TCNT0=glopal_u8tcnt0StartVal;
 	Timer0_InteruptPointer();
+}
+
+
+//timer 0 over flow ISR
+ISR(__vector_10) {
+	Timer0_InteruptPointerTCNT0();
 }

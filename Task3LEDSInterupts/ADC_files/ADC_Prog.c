@@ -5,8 +5,8 @@
  *      Author: mahmoud
  */
 
-#include"../types.h"
-#include "../util.h"
+#include"../headerfiles/types.h"
+#include "../headerfiles/util.h"
 #include "ADC_Config.h"
 #include "ADC_Private.h"
 #include "ADC_Interface.h"
