@@ -31,53 +31,14 @@ u8 glopal_int=0;
 
 //timer 0 over flow ISR
  void  Interupt_voidTIMER0ISR(void) {
-	static u8 local_u8Timer0OVFCounter1 = 0;
-	static u8 local_u8Timer0OVFCounter2 = 0;
-	static u8 local_u8Timer0OVFCounter3 = 0;
-
-	static u8 pin1 =0x01;
-	static u8 pin2 =0x01;
-	static u8 pin3 =0x01;
-
-
-	local_u8Timer0OVFCounter1++;
-	local_u8Timer0OVFCounter2++;
-	local_u8Timer0OVFCounter3++;
-
-	//its time to move the part on the dot matrix
-
-		 if(local_u8Timer0OVFCounter1 == MOVINGPARTSTIME)
-		 {	local_u8Timer0OVFCounter1=0;
-			 pin1=Togglebit(pin1,0);
-			 DIO_u8WritePinVal(led1Pin,(glopal_led1&pin1));
-		 }else{
-			}
-
-		 if(local_u8Timer0OVFCounter2 == 122)
-				 {
-			 local_u8Timer0OVFCounter2=0;
-			 pin2=Togglebit(pin2,0);
-			 DIO_u8WritePinVal(led2Pin,(glopal_led2&pin2));
-
-
-				 }else{
-					}
-
-		 if(local_u8Timer0OVFCounter3 == 62)
-				 {
-			 local_u8Timer0OVFCounter3=0;
-			 pin3=Togglebit(pin3,0);
-			 DIO_u8WritePinVal(led3Pin,(glopal_led3&pin3));
-
-
-				 }else{
-					}
-
-
+	static u8 local_u8Timer0OVFCounter1 = 0x01;
+	DIO_u8WritePinVal(DIO_u8PIN8,local_u8Timer0OVFCounter1)
+	local_u8Timer0OVFCounter1=Togglebit(local_u8Timer0OVFCounter1,0);
 }
 
 
 
+/*
  ISR(__vector_1)
  {
  	static u8 local_u8counter=0;
@@ -98,20 +59,14 @@ u8 glopal_int=0;
 
 
  }
+*/
 
 int main(void) {
 	u8 local_u8_keypadVal=0,oldVal=0;
-	DIO_voidInit();
 	KPD_voidInit();
-	 DIO_u8WritePinVal(DIO_u8PIN30,DIO_u8LOW);
-	// DIO_u8WritePinVal(DIO_u8PIN30,DIO_u8HIGH);
-	 Delay(250);
+	DIO_voidInit();
 	Timer0_voidSet_ISR(Interupt_voidTIMER0ISR);
-	 //DIO_u8WritePinVal(DIO_u8PIN30,DIO_u8LOW);
-
 	Timer0_voidInit();
-	InteruptInit();
-
 while(1){
 
 	KPD_u8Read(&local_u8_keypadVal);
@@ -121,16 +76,11 @@ while(1){
 				{
 				//left
 				case 5:
-					led1=Togglebit(led1,0);
 					break;
 				//right
 				case 7:
-					led2=Togglebit(led2,0);
 					break;
-					//rotate
-				case 6:
-					led3=Togglebit(led3,0);
-					break;
+
 				default:
 					break;
 
@@ -146,14 +96,4 @@ while(1){
 }
 
 
-void InteruptInit(void)
-{
-	ExtInter_u8MCUCR=Setbit(ExtInter_u8MCUCR,0);
-	ExtInter_u8MCUCR=Clrbit(ExtInter_u8MCUCR,1);
-
-	ExtInter_u8GICR=Setbit(ExtInter_u8GICR,6);
-
-
-//	__asm__("SEI");
-}
 
