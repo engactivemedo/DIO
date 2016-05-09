@@ -11,15 +11,19 @@
 #include "ADC_Private.h"
 #include "ADC_Interface.h"
 
-extern void ADC_u8StartConvertion(void) {
+extern void ADC_u8StartConvertion(u8 copy_u8ChannelNo) {
+	ADC_ADMUX &=0b11111000;
+	ADC_ADMUX |= copy_u8ChannelNo;
 	ADC_ADCSRA = Setbit(ADC_ADCSRA, ADC_U8ADMUX_ADSC);
 }
 
-extern u8 ADC_u8WaitForConvertion(void) {
+extern u8 ADC_u8WaitForConvertion(u8 copy_u8ChannelNo) {
+	ADC_ADMUX &=0b11111000;
+	ADC_ADMUX |= copy_u8ChannelNo;
 	return (GetBit(ADC_ADCSRA,ADC_U8ADMUX_ADIF) == 1);
 }
 
-extern u8 ADC_u16ReadChannelOneShotNoWait(u8 copy_u8ChannelNo){
+extern u16 ADC_u16ReadChannelOneShotNoWait(u8 copy_u8ChannelNo){
 	u16 local_u16valToReturn=0;
 	u8 local_u8tempLowval=0;
 //configure the channel

@@ -32,7 +32,7 @@ u8 glopal_int=0;
 //timer 0 over flow ISR
  void  Interupt_voidTIMER0ISR(void) {
 	static u8 local_u8Timer0OVFCounter1 = 0x01;
-	DIO_u8WritePinVal(DIO_u8PIN8,local_u8Timer0OVFCounter1)
+	DIO_u8WritePinVal(DIO_u8PIN8,local_u8Timer0OVFCounter1);
 	local_u8Timer0OVFCounter1=Togglebit(local_u8Timer0OVFCounter1,0);
 }
 

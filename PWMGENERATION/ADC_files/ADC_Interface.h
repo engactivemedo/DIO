@@ -31,7 +31,14 @@ typedef struct{
 #define ADC_U8Channel8 7
 
 /*comment:! to initialize  the ADC */
+
+
+
 void ADC_voidinit(void);
+
+u8 ADC_u8WaitForConvertion(u8 copy_u8ChannelNo);
+u16 ADC_u16ReadChannelOneShotNoWait(u8 copy_u8ChannelNo);
+
 
 /*comment:! to ReadChannelFiltered (3 reading /3)  the ADC */
 
@@ -48,9 +55,6 @@ extern void ADC_voidEnable(void);
 /*comment:! to  disable  the ADC */
 extern void ADC_voidDisable(void);
 
-extern void ADC_u8StartConvertion(void);
+extern void ADC_u8StartConvertion(u8 copy_u8ChannelNo);
 
-extern u8 ADC_u8WaitForConvertion(void);
-
-extern u8 ADC_u16ReadChannelOneShotNoWait(u8 copy_u8ChannelNo);
 #endif /* ADC_INTERFACE_H_ */
